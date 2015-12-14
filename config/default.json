@@ -1,0 +1,5 @@
+{
+  "secret": "changeme",
+  "adminpassword": "changeme",
+  "database": "mongodb://localhost/changeme"
+}
