@@ -11,6 +11,7 @@ var jwt = require('jwt-simple');
 var User = require('./users.model');
 var mongoose = require('mongoose');
 var usersController = require('./users.controller');
+var spawn = require('child_process').spawn;
 
 // DATABASE CONNECTION
 var db = mongoose.connection;
@@ -64,19 +65,28 @@ var io = require('socket.io')(httpSocket);
 var channels = {};
 io.on('connection', connection);
 httpSocket.listen(3001, listenSocket);
-function allowCrossDomain (req, res, next) {
-    res.header('Access-Control-Allow-Origin', '*');
-    res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE,OPTIONS');
-    res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization, Content-Length, X-Requested-With');
-    if (req.method === 'OPTIONS') {
-      res.send(200);
-    }
-    else {
-      next();
-    }
+
+// OPTIONAL POWER MANAGEMENT
+var active = {};
+var suspended = {};
+if (config.has('power')) {
+  setInterval(checkActive, 1000 * 60 * config.get('power').interval);
+}
+
+function allowCrossDomain(req, res, next) {
+  res.header('Access-Control-Allow-Origin', '*');
+  res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE,OPTIONS');
+  res.header('Access-Control-Allow-Headers',
+    'Content-Type, Authorization, Content-Length, X-Requested-With');
+  if (req.method === 'OPTIONS') {
+    res.send(200);
+  } else {
+    next();
+  }
 }
 function noCache(req, res, next) {
-  res.setHeader('cache-control', 'private, max-age=0, no-cache, no-store, must-revalidate');
+  res.setHeader('cache-control',
+    'private, max-age=0, no-cache, no-store, must-revalidate');
   res.setHeader('expires', '0');
   res.setHeader('pragma', 'no-cache');
   next();
@@ -137,7 +147,25 @@ function thr0wContent(req, res) {
     User.findOne({'_id': _id}, callback);
   }
   function success() {
-    for (var i = 0; i < chns.length; i++) {
+    var i;
+    var j;
+    var managed;
+    if (config.has('power') && !active[_id]) {
+      managed = config.get('power').accounts;
+      for (i = 0; i < managed.length; i++) {
+        if (managed[i]._id === _id) {
+          active[_id] = true;
+          suspended[_id] = false;
+          for (j = 0; j < managed[i].clients.length; j++) {
+            spawn('/usr/bin/wakeonlan', [
+              '-i',
+              'managed[i].clients[j].ip',
+              'managed[i].clients[j].mac']);
+          }
+        }
+      }
+    }
+    for (i = 0; i < chns.length; i++) {
       messageChannel(_id, -1, chns[i], message);
     }
     res.send({});
@@ -195,7 +223,7 @@ function connection(socket) {
       return;
     }
     function success() {
-      channelKey = _id + ':' + chn; 
+      channelKey = _id + ':' + chn;
       var channel = channels[channelKey];
       io.sockets.connected[socket.id] = socket;
       if (channel) {
@@ -241,5 +269,21 @@ function messageChannel(_id, sourceChn, chn, message) {
   var channel = channels[_id + ':' + chn];
   if (channel) {
     channel.emit('message', {source: sourceChn, message: message});
+  }
+}
+function checkActive() {
+  var i;
+  var j;
+  var managed = config.get('power').accounts;
+  for (i = 0; i < managed.length; i++) {
+    var _id = managed[i]._id;
+    if (!active[_id] && !suspended[_id]) {
+      for (j = 0; j < managed[i].clients.length; j++) {
+        spawn('/usr/bin/ssh',
+          ['suspend@' + managed[i].clients[j].ip]);
+      }
+      suspended[_id] = true;
+    }
+    active[_id] = false;
   }
 }
