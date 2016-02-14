@@ -11,7 +11,7 @@ var jwt = require('jwt-simple');
 var User = require('./users.model');
 var mongoose = require('mongoose');
 var usersController = require('./users.controller');
-var spawn = require('child_process').spawn;
+// var spawn = require('child_process').spawn;
 
 // DATABASE CONNECTION
 var db = mongoose.connection;
@@ -69,8 +69,13 @@ httpSocket.listen(3001, listenSocket);
 // OPTIONAL POWER MANAGEMENT
 var active = {};
 var suspended = {};
+var accounts;
+var iAccount;
 if (config.has('power')) {
-  setInterval(checkActive, 1000 * 60 * config.get('power').interval);
+  accounts = config.get('power').accounts;
+  for (iAccount = 0; iAccount < accounts.length; iAccount++) {
+    startChecking(accounts[iAccount]);
+  }
 }
 
 function allowCrossDomain(req, res, next) {
@@ -149,18 +154,19 @@ function thr0wContent(req, res) {
   function success() {
     var i;
     var j;
-    var managed;
     if (config.has('power') && !active[_id]) {
-      managed = config.get('power').accounts;
-      for (i = 0; i < managed.length; i++) {
-        if (managed[i]._id === _id) {
+      for (i = 0; i < accounts.length; i++) {
+        if (accounts[i]._id === _id) {
           active[_id] = true;
           suspended[_id] = false;
-          for (j = 0; j < managed[i].clients.length; j++) {
+          for (j = 0; j < accounts[i].clients.length; j++) {
+            console.log('WAKE ' + accounts[i].clients[j].mac);
+            /*
             spawn('/usr/bin/wakeonlan', [
               '-i',
-              'managed[i].clients[j].ip',
-              'managed[i].clients[j].mac']);
+              accounts[i].clients[j].ip,
+              accounts[i].clients[j].mac]);
+            */
           }
         }
       }
@@ -271,19 +277,21 @@ function messageChannel(_id, sourceChn, chn, message) {
     channel.emit('message', {source: sourceChn, message: message});
   }
 }
-function checkActive() {
-  var i;
-  var j;
-  var managed = config.get('power').accounts;
-  for (i = 0; i < managed.length; i++) {
-    var _id = managed[i]._id;
+function startChecking(account) {
+  setInterval(checkActive, 1000 * 60 * account.interval);
+  function checkActive() {
+    var i;
+    var _id = account._id;
     if (!active[_id] && !suspended[_id]) {
-      for (j = 0; j < managed[i].clients.length; j++) {
+      for (i = 0; i < account.clients.length; i++) {
+        console.log('SUSPEND ' + account.clients[i].ip);
+        /*
         spawn('/usr/bin/ssh',
-          ['suspend@' + managed[i].clients[j].ip]);
+          ['suspend@' + account.clients[i].ip]);
+        */
+        suspended[_id] = true;
       }
-      suspended[_id] = true;
+      active[_id] = false;
     }
-    active[_id] = false;
   }
 }
