@@ -11,7 +11,7 @@ var jwt = require('jwt-simple');
 var User = require('./users.model');
 var mongoose = require('mongoose');
 var usersController = require('./users.controller');
-// var spawn = require('child_process').spawn;
+var spawn = require('child_process').spawn;
 
 // DATABASE CONNECTION
 var db = mongoose.connection;
@@ -153,21 +153,11 @@ function thr0wContent(req, res) {
   }
   function success() {
     var i;
-    var j;
-    if (config.has('power') && !active[_id]) {
+    active[_id] = true;
+    if (config.has('power') && suspended[_id]) {
       for (i = 0; i < accounts.length; i++) {
         if (accounts[i]._id === _id) {
-          active[_id] = true;
-          suspended[_id] = false;
-          for (j = 0; j < accounts[i].clients.length; j++) {
-            console.log('WAKE ' + accounts[i].clients[j].mac);
-            /*
-            spawn('/usr/bin/wakeonlan', [
-              '-i',
-              accounts[i].clients[j].ip,
-              accounts[i].clients[j].mac]);
-            */
-          }
+          wake(accounts[i]);
         }
       }
     }
@@ -282,16 +272,30 @@ function startChecking(account) {
   function checkActive() {
     var i;
     var _id = account._id;
-    if (!active[_id] && !suspended[_id]) {
+    var nowHour = (new Date()).getHours();
+    var operating = account.start <= account.end ?
+      nowHour >= account.start && nowHour < account.end :
+      nowHour >= account.start || nowHour < account.end;
+    if (!active[_id] && !suspended[_id] && !operating) {
       for (i = 0; i < account.clients.length; i++) {
-        console.log('SUSPEND ' + account.clients[i].ip);
-        /*
         spawn('/usr/bin/ssh',
           ['suspend@' + account.clients[i].ip]);
-        */
         suspended[_id] = true;
       }
-      active[_id] = false;
     }
+    if (suspended[_id] && operating) {
+      wake(account);
+    }
+    active[_id] = false;
+  }
+}
+function wake(account) {
+  var i;
+  suspended[account._id] = false;
+  for (i = 0; i < account.clients.length; i++) {
+    spawn('/usr/bin/wakeonlan', [
+      '-i',
+      accounts[i].clients[i].ip,
+      accounts[i].clients[i].mac]);
   }
 }

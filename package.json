@@ -1,6 +1,6 @@
 {
   "name": "thr0w",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "",
   "author": "John Tucker <john@larkintuckerllc.com>",
   "scripts": {
@@ -9,7 +9,7 @@
   "main": "index.js",
   "repository": {
     "type": "git",
-    "url": "https://github.com/larkintuckerllc/thr0w"
+    "url": "https://github.com/larkintuckerllc/thr0w-server"
   },
   "keywords": [
   ],
@@ -27,5 +27,5 @@
   },
   "devDependencies": {
   },
-  "license": "MIT"
+  "license": "GPL"
 }
