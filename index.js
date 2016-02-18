@@ -277,6 +277,10 @@ function startChecking(account) {
       nowHour >= account.start && nowHour < account.end :
       nowHour >= account.start || nowHour < account.end;
     if (!active[_id] && !suspended[_id] && !operating) {
+      if (account.master) {
+        messageChannel(account._id, -1, account.master.channel,
+          account.master.endURL);
+      }
       for (i = 0; i < account.clients.length; i++) {
         spawn('/usr/bin/ssh',
           ['suspend@' + account.clients[i].ip]);
@@ -292,6 +296,10 @@ function startChecking(account) {
 function wake(account) {
   var i;
   suspended[account._id] = false;
+  if (account.master) {
+    messageChannel(account._id, -1, account.master.channel,
+      account.master.startURL);
+  }
   for (i = 0; i < account.clients.length; i++) {
     spawn('/usr/bin/wakeonlan', [
       '-i',
