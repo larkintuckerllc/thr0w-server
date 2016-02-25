@@ -283,7 +283,10 @@ function startChecking(account) {
       }
       for (i = 0; i < account.clients.length; i++) {
         spawn('/usr/bin/ssh',
-          ['suspend@' + account.clients[i].ip]);
+          [
+            account.clients[i].user + '@' + account.clients[i].ip,
+            account.clients[i].endCmd
+          ]);
         suspended[_id] = true;
       }
     }
@@ -301,9 +304,10 @@ function wake(account) {
       account.master.startURL);
   }
   for (i = 0; i < account.clients.length; i++) {
-    spawn('/usr/bin/wakeonlan', [
-      '-i',
-      accounts[i].clients[i].ip,
-      accounts[i].clients[i].mac]);
+    spawn('/usr/bin/ssh',
+      [
+        account.clients[i].user + '@' + account.clients[i].ip,
+        account.clients[i].startCmd 
+      ]);
   }
 }
