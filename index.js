@@ -279,7 +279,11 @@ function startChecking(account) {
     if (!active[_id] && !suspended[_id] && !operating) {
       if (account.master) {
         messageChannel(account._id, -1, account.master.channel,
-          account.master.endURL);
+          {
+            action: 'update',
+            url: account.master.endURL
+          }
+        );
       }
       for (i = 0; i < account.clients.length; i++) {
         spawn('/usr/bin/ssh',
@@ -301,13 +305,17 @@ function wake(account) {
   suspended[account._id] = false;
   if (account.master) {
     messageChannel(account._id, -1, account.master.channel,
-      account.master.startURL);
+      {
+        action: 'update',
+        url: account.master.startURL
+      }
+    );
   }
   for (i = 0; i < account.clients.length; i++) {
     spawn('/usr/bin/ssh',
       [
         account.clients[i].user + '@' + account.clients[i].ip,
-        account.clients[i].startCmd 
+        account.clients[i].startCmd
       ]);
   }
 }
