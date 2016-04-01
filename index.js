@@ -2,23 +2,12 @@
 var config = require('config');
 var SECRET = config.get('secret');
 var ADMINPASSWORD = config.get('adminpassword');
-// var DATABASE = config.get('database');
 var express = require('express');
 var passport = require('passport');
 var LocalStrategy = require('passport-local').Strategy;
 var BearerStrategy = require('passport-http-bearer').Strategy;
 var jwt = require('jwt-simple');
-// var User = require('./users.model');
-// var mongoose = require('mongoose');
-// var usersController = require('./users.controller');
 var spawn = require('child_process').spawn;
-
-/*
-// DATABASE CONNECTION
-var db = mongoose.connection;
-db.on('error', console.error.bind(console, 'connection error:'));
-mongoose.connect(DATABASE);
-*/
 
 // APP SETUP
 var app = express();
@@ -29,25 +18,6 @@ app.use(require('body-parser').urlencoded({extended: true}));
 passport.use(new LocalStrategy(localStrategyVerify));
 passport.use(new BearerStrategy(bearerStrategyVerify));
 app.use(passport.initialize());
-
-/*
-// USERS CRUD ROUTES
-app.get('/api/users/:_id',
-  passport.authenticate('bearer', {session: false}),
-  usersController.findById);
-app.get('/api/users/',
-  passport.authenticate('bearer', {session: false}),
-  usersController.findAll);
-app.post('/api/users/',
-  passport.authenticate('bearer', {session: false}),
-  usersController.add);
-app.put('/api/users/:_id',
-  passport.authenticate('bearer', {session: false}),
-  usersController.update);
-app.delete('/api/users/:_id',
-  passport.authenticate('bearer', {session: false}),
-  usersController.remove);
-*/
 
 // LOGIN ROUTE
 app.post('/api/login/',
@@ -111,23 +81,8 @@ function localStrategyVerify(username, password, done) {
       }
     });
   } else {
-    // User.findOne({'username': username}, callback);
     return done(false, false);
   }
-  /*
-  function callback(err, user) {
-    if (err) {
-      return done(err);
-    }
-    if (!user) {
-      return done(false, false);
-    }
-    if (!user.validPassword(password)) {
-      return done(false, false);
-    }
-    return done(false, jwt.encode({_id: user._id}, SECRET));
-  }
-  */
 }
 function bearerStrategyVerify(token, done) {
   // EXPECTING ASYNC
@@ -157,7 +112,6 @@ function thr0wContent(req, res) {
     success();
   } else {
     return res.status(401).send({});
-    // User.findOne({'_id': _id}, callback);
   }
   function success() {
     var i;
@@ -174,17 +128,6 @@ function thr0wContent(req, res) {
     }
     res.send({});
   }
-  /*
-  function callback(err, user) {
-    if (err) {
-      return res.status(500).send({});
-    }
-    if (!user) {
-      return res.status(401).send({});
-    }
-    success();
-  }
-  */
 }
 function listen() {
   console.log('listening on *:3000');
@@ -223,7 +166,6 @@ function connection(socket) {
         success();
       } else {
         socket.disconnect('unauthorized');
-        // User.findOne({'_id': _id}, callback);
       }
     } catch (error) {
       socket.disconnect('unauthorized');
@@ -253,17 +195,6 @@ function connection(socket) {
         }
       }
     }
-    /*
-    function callback(err, user) {
-      if (err) {
-        socket.disconnect('unauthorized');
-      }
-      if (!user) {
-        socket.disconnect('unauthorized');
-      }
-      success();
-    }
-    */
   }
   function disconnect() {
     if (channels[channelKey]) {
