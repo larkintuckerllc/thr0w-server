@@ -7,7 +7,7 @@ var passport = require('passport');
 var LocalStrategy = require('passport-local').Strategy;
 var BearerStrategy = require('passport-http-bearer').Strategy;
 var jwt = require('jwt-simple');
-var spawn = require('child_process').spawn;
+// var spawn = require('child_process').spawn;
 
 // APP SETUP
 var app = express();
@@ -40,6 +40,7 @@ var channels = {};
 io.on('connection', connection);
 httpSocket.listen(3001, listenSocket);
 
+/*
 // OPTIONAL POWER MANAGEMENT
 var active = {};
 var suspended = {};
@@ -51,6 +52,7 @@ if (config.has('power')) {
     startChecking(accounts[iAccount]);
   }
 }
+*/
 
 function allowCrossDomain(req, res, next) {
   res.header('Access-Control-Allow-Origin', '*');
@@ -115,6 +117,7 @@ function thr0wContent(req, res) {
   }
   function success() {
     var i;
+    /*
     active[_id] = true;
     if (config.has('power') && suspended[_id]) {
       for (i = 0; i < accounts.length; i++) {
@@ -123,6 +126,7 @@ function thr0wContent(req, res) {
         }
       }
     }
+    */
     for (i = 0; i < chns.length; i++) {
       messageChannel(_id, -1, chns[i], message);
     }
@@ -211,6 +215,7 @@ function messageChannel(_id, sourceChn, chn, message) {
     channel.emit('message', {source: sourceChn, message: message});
   }
 }
+/*
 function startChecking(account) {
   setInterval(checkActive, 1000 * 60 * account.interval);
   function checkActive() {
@@ -263,3 +268,4 @@ function wake(account) {
       ]);
   }
 }
+*/
