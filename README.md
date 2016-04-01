@@ -1,4 +1,4 @@
-README v1.1.0 / 31 MARCH 2016
+README v1.2.0 / 01 APRIL 2016
 
 # Thr0w Server
 
@@ -17,11 +17,11 @@ https://github.com/larkintuckerllc/thr0w-client
 
 ## Installation
 
-Install Node.js (Linux, WIndows, or Mac OS X):
+Install Node.js (Linux, Windows, or Mac OS X):
 
 https://nodejs.org/en/
 
-Download the latest version:
+Download the latest version of the Thr0w Server:
 
 https://github.com/larkintuckerllc/thr0w-server/releases
 
@@ -37,8 +37,8 @@ password.
 
 Starting the Thr0w Server consists of:
 
-1. Set environment variable *NODE_ENV* to *production*.
-2. Set environment variable *NODE_APP_INSTANCE* to *0*.
+1. Set an environment variable *NODE_ENV* with *production*.
+2. Set an environment variable *NODE_APP_INSTANCE* with *0*.
 3. Change directory to the root folder.
 4. Execute the command.
 
@@ -53,9 +53,20 @@ https://github.com/Unitech/pm2
 
 ## Usage
 
-TODO: socket.io
+While the Thr0w Server provides an API of it's own,
+the primary method of using the server is to use the Thr0w (Client) API.
 
-TODO:
+https://github.com/larkintuckerllc/thr0w-client
+
+The Thr0w Server does provide the required *socket.io.js* JavaScript library
+that is added to the HTML *body* of applications using the Throw (Client) API.
+
+```
+<script src="http://HOSTNAME:3001/socket.io/socket.io.js"></script>
+```
+
+where *HOSTNAME* is the hostname of the Thr0w Server, e.g., *localhost*
+in the case of local development.
 
 ## Contributing
 
@@ -64,8 +75,6 @@ bug fixes or enhancements as pull requests. Specifically, follow GitHub's
 document *Contributing to Open Source on GitHub*.
 
 <https://guides.github.com/activities/contributing-to-open-source/>
-
-TODO:
 
 The JavaScript is to pass JSHint with the default configuration (with the
 *node* environment). The JavaScript is to pass JSCS with the Google preset.
