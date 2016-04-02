@@ -54,12 +54,18 @@ https://github.com/Unitech/pm2
 ## Usage
 
 While the Thr0w Server provides an API of it's own,
-the primary method of using the server is to use the Thr0w (Client) API.
+the primary method of using the server is to use
+one of:
+
+* Thr0w (Client) API: Chrome Web Browser
+* Thr0w (Node.js) API: Node.js
+
+**Thr0w (Client) API**
 
 https://github.com/larkintuckerllc/thr0w-client
 
 The Thr0w Server does provide the required *socket.io.js* JavaScript library
-that is added to the HTML *body* of applications using the Throw (Client) API.
+that is added to the HTML *body* of applications using the Thr0w (Client) API.
 
 ```
 <script src="http://HOSTNAME:3001/socket.io/socket.io.js"></script>
@@ -67,6 +73,10 @@ that is added to the HTML *body* of applications using the Throw (Client) API.
 
 where *HOSTNAME* is the hostname of the Thr0w Server, e.g., *localhost*
 in the case of local development.
+
+**Thr0w (Node.js) API**
+
+https://github.com/larkintuckerllc/thr0w-api
 
 ## Contributing
 
