@@ -7,7 +7,6 @@ var passport = require('passport');
 var LocalStrategy = require('passport-local').Strategy;
 var BearerStrategy = require('passport-http-bearer').Strategy;
 var jwt = require('jwt-simple');
-// var spawn = require('child_process').spawn;
 
 // APP SETUP
 var app = express();
@@ -39,20 +38,6 @@ var io = require('socket.io')(httpSocket);
 var channels = {};
 io.on('connection', connection);
 httpSocket.listen(3001, listenSocket);
-
-/*
-// OPTIONAL POWER MANAGEMENT
-var active = {};
-var suspended = {};
-var accounts;
-var iAccount;
-if (config.has('power')) {
-  accounts = config.get('power').accounts;
-  for (iAccount = 0; iAccount < accounts.length; iAccount++) {
-    startChecking(accounts[iAccount]);
-  }
-}
-*/
 
 function allowCrossDomain(req, res, next) {
   res.header('Access-Control-Allow-Origin', '*');
@@ -117,16 +102,6 @@ function thr0wContent(req, res) {
   }
   function success() {
     var i;
-    /*
-    active[_id] = true;
-    if (config.has('power') && suspended[_id]) {
-      for (i = 0; i < accounts.length; i++) {
-        if (accounts[i]._id === _id) {
-          wake(accounts[i]);
-        }
-      }
-    }
-    */
     for (i = 0; i < chns.length; i++) {
       messageChannel(_id, -1, chns[i], message);
     }
@@ -215,57 +190,3 @@ function messageChannel(_id, sourceChn, chn, message) {
     channel.emit('message', {source: sourceChn, message: message});
   }
 }
-/*
-function startChecking(account) {
-  setInterval(checkActive, 1000 * 60 * account.interval);
-  function checkActive() {
-    var i;
-    var _id = account._id;
-    var nowHour = (new Date()).getHours();
-    var operating = account.start <= account.end ?
-      nowHour >= account.start && nowHour < account.end :
-      nowHour >= account.start || nowHour < account.end;
-    if (!active[_id] && !suspended[_id] && !operating) {
-      if (account.master) {
-        messageChannel(account._id, -1, account.master.channel,
-          {
-            action: 'update',
-            url: account.master.endURL
-          }
-        );
-      }
-      for (i = 0; i < account.clients.length; i++) {
-        spawn('/usr/bin/ssh',
-          [
-            account.clients[i].user + '@' + account.clients[i].ip,
-            account.clients[i].endCmd
-          ]);
-        suspended[_id] = true;
-      }
-    }
-    if (suspended[_id] && operating) {
-      wake(account);
-    }
-    active[_id] = false;
-  }
-}
-function wake(account) {
-  var i;
-  suspended[account._id] = false;
-  if (account.master) {
-    messageChannel(account._id, -1, account.master.channel,
-      {
-        action: 'update',
-        url: account.master.startURL
-      }
-    );
-  }
-  for (i = 0; i < account.clients.length; i++) {
-    spawn('/usr/bin/ssh',
-      [
-        account.clients[i].user + '@' + account.clients[i].ip,
-        account.clients[i].startCmd
-      ]);
-  }
-}
-*/
