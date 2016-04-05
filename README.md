@@ -1,4 +1,4 @@
-README v1.2.0 / 01 APRIL 2016
+README v1.2.0 / 04 APRIL 2016
 
 # Thr0w Server
 
@@ -59,6 +59,7 @@ one of:
 
 * Thr0w (Client) API: Chrome Web Browser
 * Thr0w (Node.js) API: Node.js
+* Thr0w URL: Chrome Web Browser (Extension)
 
 **Thr0w (Client) API**
 
@@ -77,6 +78,12 @@ in the case of local development.
 **Thr0w (Node.js) API**
 
 https://github.com/larkintuckerllc/thr0w-api
+
+**Thr0w URL**
+
+This Chrome extension allows one to remotely control the browser's location.
+
+https://github.com/larkintuckerllc/thr0w-url
 
 ## Contributing
 
