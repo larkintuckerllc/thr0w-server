@@ -1,4 +1,4 @@
-README v1.2.0 / 04 APRIL 2016
+README v1.2.1 / 21 APRIL 2016
 
 # Thr0w Server
 
@@ -10,10 +10,8 @@ software. The key to this solution is having one computer behind each screen
 networked to a single computer acting as a server. With this design, the
 splitting and synchronization of content is accomplished through software.
 
-This repository provides the project's Thr0w Server that supports the
-Thr0w (Client) API available at:
-
-https://github.com/larkintuckerllc/thr0w-client
+This repository provides the Thr0w Server; the central
+component of the Thr0w Project.
 
 ## Installation
 
@@ -53,13 +51,14 @@ https://github.com/Unitech/pm2
 
 ## Usage
 
-While the Thr0w Server provides an API of it's own,
+While the Thr0w Server provides an (as of now) undocumented API of it's own,
 the primary method of using the server is to use
 one of:
 
 * Thr0w (Client) API: Chrome Web Browser
 * Thr0w (Node.js) API: Node.js
 * Thr0w URL: Chrome Web Browser (Extension)
+* Thr0w Modules: Contributed Modules to Extend Functionality
 
 **Thr0w (Client) API**
 
@@ -84,6 +83,12 @@ https://github.com/larkintuckerllc/thr0w-api
 This Chrome extension allows one to remotely control the browser's location.
 
 https://github.com/larkintuckerllc/thr0w-url
+
+**Thr0w Modules**
+
+https://github.com/larkintuckerllc/thr0w-modules
+
+A repository providing a list of contributed Thr0w modules.
 
 ## Contributing
 
