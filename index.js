@@ -18,12 +18,13 @@ passport.use(new LocalStrategy(localStrategyVerify));
 passport.use(new BearerStrategy(bearerStrategyVerify));
 app.use(passport.initialize());
 
-// LOGIN ROUTE
+// ROUTES
 app.post('/api/login/',
   passport.authenticate('local', {session: false}),
   sendToken);
-
-// THROW ROUTE
+app.post('/api/valid/',
+  passport.authenticate('bearer', {session: false}),
+  valid);
 app.post('/api/thr0w/',
   passport.authenticate('bearer', {session: false}),
   thr0wContent);
@@ -87,6 +88,17 @@ function sendToken(req, res) {
   res.send({
     'token': req.user
   });
+}
+function valid(req, res) {
+  var _id = req.user;
+  if (_id === 'admin') {
+    success();
+  } else {
+    return res.status(401).send({});
+  }
+  function success() {
+    res.send({});
+  }
 }
 function thr0wContent(req, res) {
   var _id = req.user;
