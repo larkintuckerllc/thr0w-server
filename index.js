@@ -7,13 +7,14 @@ var passport = require('passport');
 var LocalStrategy = require('passport-local').Strategy;
 var BearerStrategy = require('passport-http-bearer').Strategy;
 var jwt = require('jwt-simple');
+var bodyParser = require('body-parser');
 
 // APP SETUP
 var app = express();
 app.use(allowCrossDomain);
 app.use(noCache);
-app.use(require('body-parser').json());
-app.use(require('body-parser').urlencoded({extended: true}));
+app.use(bodyParser.json({limit: '5mb'}));
+app.use(bodyParser.urlencoded({extended: true}));
 passport.use(new LocalStrategy(localStrategyVerify));
 passport.use(new BearerStrategy(bearerStrategyVerify));
 app.use(passport.initialize());
