@@ -13,7 +13,7 @@ var bodyParser = require('body-parser');
 var app = express();
 app.use(allowCrossDomain);
 app.use(noCache);
-app.use(bodyParser.json({limit: '5mb'}));
+app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: true}));
 passport.use(new LocalStrategy(localStrategyVerify));
 passport.use(new BearerStrategy(bearerStrategyVerify));
